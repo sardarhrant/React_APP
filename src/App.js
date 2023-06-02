@@ -1,24 +1,29 @@
-import logo from './logo.svg';
+import { Fragment, useMemo, useContext, useEffect } from 'react';
+import Layout from './components/Layout';
+import Card from './components/Card'
 import './App.css';
+import { Context } from './context';
 
 function App() {
+  const { state, read } = useContext(Context)
+  const count = useMemo(
+    () => `You have ${state.items.length} image${state.items.length > 1 ? 's' : ''}`, [state.items]
+  );
+
+  useEffect(() => {
+    read()
+  }, [])
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+      <Fragment>
+       <Layout>
+        <h1 className='text-center'>Gallery</h1>
+        {count}
+        <div className='row'>
+            {state.items.map((photo, index)=> <Card key={index} src={photo.path}/>)}
+        </div>
+       </Layout>
+    </Fragment>
   );
 }
 
