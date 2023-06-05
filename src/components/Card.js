@@ -1,31 +1,34 @@
-import { useMemo } from "react"
+import { useMemo } from "react";
+import { useNavigate } from "react-router-dom" 
 
-function Card({path, title, createdAt, user}) {
+function Card({ path, title, createdAt, user, id }) {
+    const navigate = useNavigate()
+    const handleOnClick = () => {
+        navigate(`/images/${id}`, { state : { id } })
+    }
+
     const timestamp = useMemo(() => {
-        const date = `${new Date(createdAt.seconds * 1000)}`.split(' ')
-        console.log(user);
+        const date = `${new Date(createdAt?.seconds*1000)}`.split(" ")
         return `${date[1]} ${date[2]} ${date[3]}`
     }, [])
-    return (
-        <div className="col mb-5">
+    return(
+        <div className="mb-5" onClick={handleOnClick}>
             <div className="card" style={{width: "18rem"}}>
-                <div style={
-                   {
-                     height: "220px",
-                     backgroundImage: `url(${path})`,
-                     backgroundSize: "cover",
-                     backgroundRepeat: "no-repeat"
-                   }
-                }>
+                <div style={{
+                    height: "220px", 
+                    backgroundImage: `url(${path})`, 
+                    backgroundSize: "cover", 
+                    backgroundRepeat: "no-repeat"
+                }}>
+
                 </div>
-                <h5 className="text-center mt-2">{title}</h5>
+                <h5 className="text-center mt-1">{title}</h5>
                 <div className="d-flex justify-content-between p-2">
                     <p>{timestamp}</p>
                     <i>{`@${user}`}</i>
                 </div>
-            </div> 
+            </div>
         </div>
     )
 }
-
-export default Card
+export default Card;
