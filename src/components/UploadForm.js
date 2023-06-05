@@ -1,13 +1,14 @@
 import { useMemo, useContext } from "react";
-import { Context } from "../context";
+import { Context } from "../context/FirestoreContext";
 import { Firestore } from "../handlers/firestore";
+import { useAuthContext } from "../context/AuthContext";
 import Storage from "../handlers/storage";
 
 const { writeDoc } = Firestore
 const { uploadFile, downloadFile } = Storage
 const Preview = () => {
-  const { state } = useContext(Context);
-  const { inputs } = state
+  const { state } = useContext(Context)
+  const { inputs } = state  
   return (
     inputs.path && <div
       className="rounded p-1 m-5"
@@ -22,16 +23,18 @@ const Preview = () => {
 }
 
 const UploadForm = () => {
-  const { dispatch, state } = useContext(Context)
+  const { dispatch, state, read } = useContext(Context)
   const { isCollapsed: isVisible, inputs} = state
-  const handleOnChange = (e) => dispatch({type: 'setInputs', payload: { value: e }})  
+  const handleOnChange = (e) => dispatch({type: 'setInputs', payload: { value: e }})
+  const { currentUser } = useAuthContext() 
+  const username = currentUser?.displayName.toLowerCase().split(' ').join('') 
   const handleOnSubmit = (e) => {
     e.preventDefault();
       uploadFile(state.inputs)
       .then(downloadFile)
       .then(url => {
-        writeDoc({...inputs, path: url}, 'stocks').then(() => {
-          dispatch({type: 'setItem'})
+        writeDoc({...inputs, path: url, user: username}, 'stocks').then(() => {
+          read()
           dispatch({type: 'collapse', payload: {bool: false }}) 
         })
       })
@@ -43,7 +46,7 @@ const UploadForm = () => {
   }, [state.inputs])
 
   return (
-    state.isCollapsed && <>
+    isVisible && <>
       <p className="display-6 text-center mb-3">Upload Stock Image</p>
       <div className="mb-5 d-flex align-items-center justify-content-center">
          <Preview />

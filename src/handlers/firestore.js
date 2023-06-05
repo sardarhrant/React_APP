@@ -6,7 +6,7 @@ export const Firestore = {
         return new Promise(async resolve => {
             let docs = []
             const [ collection_name ] = args
-            const ref = collection(db, 'stocks')
+            const ref = collection(db, collection_name)
             try {
                 const snapshots = await getDocs(ref)
                 snapshots.forEach(doc => {
@@ -25,13 +25,14 @@ export const Firestore = {
         return new Promise(async resolve => {
             const randomIndex = Math.floor(Math.random() * 1000000000)
             try {
-                debugger
-                const docRef =  doc(db, 'stocks', `${randomIndex}`);
-                await setDoc(docRef, {title: inputs.title, path: inputs.path, createdAt: serverTimestamp()});
+                const docRef =  doc(db, collection_name, `${randomIndex}`);
+                await setDoc(docRef, {title: inputs.title, path: inputs.path, createdAt: serverTimestamp(), user: inputs.user});
                 resolve('new doc siccessfully inserted')
             } catch(e) {
-                console.log('aaaaaaaaaaaaaaaa');
+                console.log(e);
             }
         })
     }
 }
+
+export default Firestore
