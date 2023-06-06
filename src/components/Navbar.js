@@ -1,6 +1,7 @@
-import { useMemo } from "react";
+import { useState, useMemo } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useAuthContext } from "../context/AuthContext";
+import { useFirestoreContext } from "../context/FirestoreContext"
 
 const LogIn = () => {
   const { login, currentUser } = useAuthContext();
@@ -26,46 +27,64 @@ const LogOut = () => {
 
 function Navigation() {
   const { currentUser } = useAuthContext();
-  const { pathname } = useLocation()
+  const { pathname } = useLocation();
   return (
     <ul className="navbar-nav me-auto mb-2 mb-lg-0">
       {/* remove all links except HOME */}
       <li className="nav-item">
-        <Link className={`nav-link ${pathname === '/' ? 'active' : ''}`} aria-current="page" to="/">
+        <Link
+          className={`nav-link ${pathname === "/" ? "active" : ""}`}
+          aria-current="page"
+          to="/"
+        >
           Home
         </Link>
       </li>
-      {currentUser && 
-        <li className="nav-item">        
+      {currentUser && (
+        <li className="nav-item">
           <Link
-            className={`nav-link ${pathname === '/stockimages' ? 'active' : ''}`}
+            className={`nav-link ${
+              pathname === "/stockimages" ? "active" : ""
+            }`}
             aria-current="page"
             to="/stockimages"
           >
             My Stock Images
-          </Link>       
+          </Link>
         </li>
-      }
-
-      {currentUser && 
-        <li className="nav-item">        
+      )}
+        {currentUser && (
+        <li className="nav-item">
           <Link
-            className={`nav-link ${pathname === '/profile' ? 'active' : ''}`}
+            className={`nav-link ${
+              pathname === "/profile" ? "active" : ""
+            }`}
             aria-current="page"
             to="/profile"
           >
             Profile
-          </Link>       
+          </Link>
         </li>
-      }
+      )}
     </ul>
   );
 }
 
 function SearchForm() {
+  const [text, search] = useState(null)
+  const { filterItems: filter } = useFirestoreContext()
+  const handleOnChange= e => {
+    search(e.target.value)
+    filter(e.target.value)
+  }
+  const handleOnSubmit = e => {
+    e.preventDefault()
+    filter(text)
+  }
   return (
-    <form className="d-flex">
+    <form className="d-flex" onSubmit={handleOnSubmit}>
       <input
+        onChange={handleOnChange}
         className="form-control me-2"
         type="search"
         placeholder="Search"
