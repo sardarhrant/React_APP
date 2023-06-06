@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { useNavigate } from "react-router-dom" 
+import { useNavigate, useLocation } from "react-router-dom" 
 
 function Card({ path, title, createdAt, user, id }) {
     const navigate = useNavigate()

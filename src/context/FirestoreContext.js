@@ -58,7 +58,7 @@ const Provider = ({ children }) => {
 }
 
 export const useFirestoreContext = () => {
-    return useContext(Context)
+  return useContext(Context)
 }
 
 export default Provider;
